@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
-var mysql = require("mysql");
+const mysql = require("mysql");
+const table = require("console.table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -147,13 +148,29 @@ function addEmployees() {
     });
 }
 function viewDept() {
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        // console.log(res);
+        console.table("Departments: ", res);
+        start();
+    });
 
 }
 function viewRole() {
-
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        // console.log(res);
+        console.table("Roles: ", res);
+        start();
+    });
 }
 function viewEmployees() {
-
+    connection.query("SELECT * FROM employee", function (err, res) {
+        if (err) throw err;
+        // console.log(res);
+        console.table("Employees: ", res);
+        start();
+    });
 }
 function employeeRoles() {
 
