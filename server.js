@@ -83,13 +83,19 @@ function addRole() {
             name: "salary",
             type: "input",
             message: "Enter the salary for this role: "
+        },
+        {
+            name: "deptId",
+            type: "input",
+            message: "Enter the department id for this role: "
         }
     ]).then(function (res) {
         connection.query(
             "INSERT INTO role SET ?",
             {
                 title: res.role,
-                salary: res.salary
+                salary: res.salary,
+                department_id: res.deptId
             },
             function (err) {
                 if (err) throw err;
@@ -124,7 +130,7 @@ function addEmployees() {
         }
     ]).then(function (res) {
         connection.query(
-            "INSERT INTO department SET ?",
+            "INSERT INTO employee SET ?",
             {
                 first_name: res.first,
                 last_name: res.last,
@@ -133,7 +139,7 @@ function addEmployees() {
             },
             function (err) {
                 if (err) throw err;
-                console.log(res.role, "Added to database");
+                console.log(res.first, "Added to database");
                 start();
             }
         );

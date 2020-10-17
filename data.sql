@@ -1,17 +1,13 @@
 -- Drops the animals_db if it exists currently --
-DROP DATABASE IF EXISTS team_db
--- Creates the "animals_db" database --
+DROP DATABASE IF EXISTS team_db;
 CREATE DATABASE team_db;
-
--- Makes it so all of the following code will affect animals_db --
 USE team_db;
-
 
 CREATE TABLE employee (
  id INTEGER(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30) NOT NULL,
-  last_name BOOLEAN NOT NULL,
-  role_id VARCHAR(30),
+  last_name VARCHAR(30) NOT NULL,
+  role_id INTEGER(10),
   manager_id INTEGER(10)
 );
 
@@ -19,7 +15,7 @@ CREATE TABLE role (
     id INTEGER(10) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30),
     salary INTEGER(10),
-    department_id INTEGER(10),
+    department_id INTEGER(10)
 );
 
 CREATE TABLE department (
@@ -50,6 +46,7 @@ VALUES("HR");
 SELECT * FROM employee;
 SELECT * FROM role;
 SELECT * FROM department;
+
 
 
 
