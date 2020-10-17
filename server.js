@@ -73,7 +73,26 @@ function addDept() {
     });
 }
 function addRole() {
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "input",
+            message: "Enter Department name you would like to add: "
+        }
+    ]).then(function (res) {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+                name: res.role
+            },
+            function (err) {
+                if (err) throw err;
+                console.log(res.role, "Added to database");
+                start();
+            }
+        );
 
+    });
 }
 function addEmployees() {
 
