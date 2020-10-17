@@ -77,13 +77,19 @@ function addRole() {
         {
             name: "role",
             type: "input",
-            message: "Enter Department name you would like to add: "
+            message: "Enter Role name you would like to add: "
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "Enter the salary for this role: "
         }
     ]).then(function (res) {
         connection.query(
-            "INSERT INTO department SET ?",
+            "INSERT INTO role SET ?",
             {
-                name: res.role
+                title: res.role,
+                salary: res.salary
             },
             function (err) {
                 if (err) throw err;
@@ -95,7 +101,44 @@ function addRole() {
     });
 }
 function addEmployees() {
+    inquirer.prompt([
+        {
+            name: "first",
+            type: "input",
+            message: "Enter the first name of the Employee you would like to add:  "
+        },
+        {
+            name: "last",
+            type: "input",
+            message: "Enter the last name of the Employee you would like to add:  "
+        },
+        {
+            name: "roleId",
+            type: "input",
+            message: "Enter role id: "
+        },
+        {
+            name: "manager",
+            type: "input",
+            message: "Enter manager id: "
+        }
+    ]).then(function (res) {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+                first_name: res.first,
+                last_name: res.last,
+                role_id: res.roleId,
+                manager_id: res.manager
+            },
+            function (err) {
+                if (err) throw err;
+                console.log(res.role, "Added to database");
+                start();
+            }
+        );
 
+    });
 }
 function viewDept() {
 
