@@ -29,7 +29,7 @@ function start() {
             name: "do",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add Department", "Add Roles", "Add Employees", "View Departments", "View Roles", "View Employees", "Update Employee Roles"]
+            choices: ["Add Department", "Add Roles", "Add Employees", "View Departments", "View Roles", "View Employees", "Update Employee Roles", "Quit"]
         }
     ]).then(function (res) {
         switch (res.do) {
@@ -47,6 +47,9 @@ function start() {
                 return viewEmployees();
             case "Update Employee Roles":
                 return employeeRoles();
+            case "Quit":
+                console.log("Thank You!");
+                break;
         }
     });
 }
@@ -173,7 +176,29 @@ function viewEmployees() {
     });
 }
 function employeeRoles() {
+    inquirer.prompt(
+        [
+            {
+                name: "employee",
+                type: "input",
+                message: "Enter the name of the Employee you wish to update:  "
+            },
+            {
+                name: "role",
+                type: "number",
+                message: "Enter the role you wish to assign to this employee:  "
+            },
 
+        ]
+    ).then(function (res) {
+        connection.query("UPDATE employee SET role_id = ? WHERE first_name = 'Jon'",
+            [res.role, res.employee],
+            function (err) {
+                if (err) throw err;
+                console.log(res.employee + "'s role was changed to " + res.role);
+                start();
+            });
+    });
 }
 
 start();
