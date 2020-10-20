@@ -21,7 +21,7 @@ function start() {
             name: "do",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Managers", "Update Employee Role", "Update Employee Manager", "Quit"]
+            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Managers", "Update Employee Role", "Update Employee Manager", "View Employees by Manager", "Quit"]
         }
     ]).then(function (res) {
         switch (res.do) {
@@ -43,7 +43,7 @@ function start() {
             case "View Employees":
                 viewEmployees();
                 break;
-            case "View Managers":
+            case "View Employees by Manager":
                 managers();
                 break;
             case "Update Employee Role":
@@ -241,8 +241,15 @@ function employeeRoles() {
 function managers() {
     connection.query("SELECT * FROM employee WHERE manager_id IS NULL", function (err, res) {
         if (err) throw err;
-        console.table(res);
-        start();
+        inquirer.prompt([
+            {
+
+            }
+        ]).then(function(res){
+
+        });
+        // console.table(res);
+
     });
 }
 
