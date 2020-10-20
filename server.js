@@ -497,23 +497,40 @@ function budget() {
                 choices: [...dept, "Cancel"]
             }
         ]).then(function (res) {
-            if(res.dept === "Cancel"){
+            if (res.dept === "Cancel") {
                 start();
-            }else{
+            } else {
                 hold = res.dept;
-                connection.query(`SELECT id FROM department WHERE name = '${hold}'`, function(err, res){
-                    if(err) throw err;
+                connection.query(`SELECT id FROM department WHERE name = '${hold}'`, function (err, res) {
+                    if (err) throw err;
                     idHold = res[0].id;
                     console.log(idHold);
-                    connection.query(`SELECT * FROM role WHERE department_id = ${idHold}`, function(err, res){
-                        if(err) throw err;
-                        for(let i = 0; i<res.length; i++){
+                    connection.query(`SELECT * FROM role WHERE department_id = ${idHold}`, function (err, res) {
+                        if (err) throw err;
+                        for (let i = 0; i < res.length; i++) {
                             let x = res[i].salary;
                             let y = res[i].id;
                             holder['sal'].push(x);
                             holder['id'].push(y);
                         }
-                        console.log(holder);
+                        // for (let i = 0; i < holder['id'].length; i++) {
+
+
+                        let query = `SELECT * FROM employee WHERE role_id = ${holder['id'][0]}`;
+                        connection.query(query, function (err, res) {
+                            if (err) throw err;
+                            console.log("FINAL RES: ", res);
+                            holder['count'].push(res.length);
+                            console.log("holder before: ", holder['count']);
+                            console.log("sal before: ", holder['sal']);
+                            // for (let i = 0; i < holder['count'][i]; i++) {
+
+                            // }
+                            var final = (parseInt(holder['sal'][0] * parseInt(holder['count'][0])));
+                            console.log("Final budget: ", final);
+                        });
+                        // }
+
                     });
                 });
             }
