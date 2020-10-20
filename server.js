@@ -21,7 +21,7 @@ function start() {
             name: "do",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "Update Employee Role", "Update Employee Manager", "View Employees by Manager", "Delete", "Quit"]
+            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Employees by Manager", "View utilized budget", "Update Employee Role", "Update Employee Manager", "Delete", "Quit"]
         }
     ]).then(function (res) {
         switch (res.do) {
@@ -45,6 +45,9 @@ function start() {
                 break;
             case "View Employees by Manager":
                 managers();
+                break;
+            case "View utilized budget":
+                budget();
                 break;
             case "Update Employee Role":
                 employeeRoles();
@@ -423,8 +426,8 @@ function delRole() {
             if (res.delete === "Cancel") {
                 start();
             } else {
-                connection.query(`DELETE FROM role WHERE title = '${res.delete}'`, function(err){
-                    if(err) throw err;
+                connection.query(`DELETE FROM role WHERE title = '${res.delete}'`, function (err) {
+                    if (err) throw err;
                     // console.log(res);
                     console.log(res.delete + " was removed");
                     start();
@@ -436,7 +439,7 @@ function delRole() {
 }
 
 function delDept() {
-    var dept = [];
+    dept.length = 0;
     connection.query("SELECT * FROM department", function (err, res) {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) {
@@ -454,8 +457,8 @@ function delDept() {
             if (res.delete === "Cancel") {
                 start();
             } else {
-                connection.query(`DELETE FROM department WHERE name = '${res.delete}'`, function(err){
-                    if(err) throw err;
+                connection.query(`DELETE FROM department WHERE name = '${res.delete}'`, function (err) {
+                    if (err) throw err;
                     // console.log(res);
                     console.log(res.delete + " was removed");
                     start();
@@ -465,5 +468,59 @@ function delDept() {
         });
     });
 }
+var dept = [];
+var hold;
+var idHold = 0;
+// var sal = [];
+// var roleId = [];
+let holder = {
+    sal: [],
+    id: [],
+    count: []
+};
+
+function budget() {
+    dept.length = 0;
+    holder['sal'].length = 0;
+    holder['id'].length = 0;
+    connection.query("SELECT name FROM department", function (err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            var x = res[i].name;
+            dept.push(x);
+        }
+        inquirer.prompt([
+            {
+                name: "dept",
+                type: "list",
+                message: "Please select a department: ",
+                choices: [...dept, "Cancel"]
+            }
+        ]).then(function (res) {
+            if(res.dept === "Cancel"){
+                start();
+            }else{
+                hold = res.dept;
+                connection.query(`SELECT id FROM department WHERE name = '${hold}'`, function(err, res){
+                    if(err) throw err;
+                    idHold = res[0].id;
+                    console.log(idHold);
+                    connection.query(`SELECT * FROM role WHERE department_id = ${idHold}`, function(err, res){
+                        if(err) throw err;
+                        for(let i = 0; i<res.length; i++){
+                            let x = res[i].salary;
+                            let y = res[i].id;
+                            holder['sal'].push(x);
+                            holder['id'].push(y);
+                        }
+                        console.log(holder);
+                    });
+                });
+            }
+
+        });
+    });
+}
+
 
 start();
