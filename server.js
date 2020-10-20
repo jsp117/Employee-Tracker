@@ -21,7 +21,7 @@ function start() {
             name: "do",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Managers", "Update Employee Role", "Update Employee Manager", "View Employees by Manager", "Quit"]
+            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Managers", "Update Employee Role", "Update Employee Manager", "View Employees by Manager", "Delete", "Quit"]
         }
     ]).then(function (res) {
         switch (res.do) {
@@ -51,6 +51,9 @@ function start() {
                 break;
             case "Update Employee Manager":
                 updateManager();
+                break;
+            case "Delete":
+                deleteAny();
                 break;
             case "Quit":
                 console.log("Thank You!");
@@ -128,6 +131,9 @@ function addEmployees() {
             var x = res[i].title;
             roles.push(x);
         }
+        connection.query("SELECT * FROM employee WHERE manager_id IS NULL", function(err, res){
+            
+        });
         inquirer.prompt([
             {
                 name: "first",
@@ -217,7 +223,7 @@ function employeeRoles() {
                     name: "employee",
                     type: "list",
                     message: "Select Employee you wish to update :",
-                    choices: test
+                    choices: [...test, "Cancel"]
                 },
                 {
                     name: "role",
@@ -226,13 +232,17 @@ function employeeRoles() {
                 },
             ]
         ).then(function (res) {
-            connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?",
-                [res.role, res.employee],
-                function (err) {
-                    if (err) throw err;
-                    console.log(res.employee + "'s role was changed to " + res.role);
-                    start();
-                });
+            if (res.employee === "Cancel") {
+                start();
+            } else {
+                connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?",
+                    [res.role, res.employee],
+                    function (err) {
+                        if (err) throw err;
+                        console.log(res.employee + "'s role was changed to " + res.role);
+                        start();
+                    });
+            }
         });
     });
 }
@@ -279,7 +289,7 @@ var update;
 function updateManager() {
     emp.length = 0;
     man.length = 0;
-    connection.query("SELECT first_name FROM employee", function (err, res) {
+    connection.query("SELECT first_name FROM employee WHERE manager_id IS NOT NULL", function (err, res) {
         if (err) throw err;
         console.table(res);
         for (let i = 0; i < res.length; i++) {
@@ -309,12 +319,13 @@ function updateManager() {
             ]).then(function (res) {
                 console.log(res.manager);
                 update = res.empUpdate;
+                var newMan = res.manager;
                 connection.query(`SELECT * FROM employee WHERE first_name = "${res.manager}"`, function (err, res) {
                     if (err) throw err;
                     var manId = parseInt(res[0].id);
                     connection.query(`UPDATE employee SET manager_id = ${manId} WHERE first_name = '${update}'`, function (err) {
                         if (err) throw err;
-                        console.log(update + " manager changed to " + update);
+                        console.log(update + " manager changed to " + newMan);
                         start();
                     });
                 });
@@ -323,6 +334,63 @@ function updateManager() {
     });
 }
 
+function deleteAny() {
+    inquirer.prompt([{
+        name: "delete",
+        type: "list",
+        message: "What would you like to delete: ",
+        choices: ["Employees", "Roles", "Departments", "Back"]
+    }
+    ]).then(function (res) {
+        switch (res.delete) {
+            case "Employees":
+                delEmp();
+                break;
+            case "Roles":
+                delRole();
+                break;
+            case "Departments":
+                delDept();
+                break;
+            case "Back":
+                start();
+                break;
+        }
+    });
+}
 
+function delEmp() {
+    emp.length = 0;
+    connection.query("SELECT first_name, last_name FROM employee", function (err, res) {
+        if (err) throw err;
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+            var x = res[i].first_name;
+            var y = res[i].last_name;
+            emp.push(x + " " + y);
+        }
+        inquirer.prompt([
+            {
+                name: "delete",
+                type: "list",
+                message: "Who would you like to remove? ",
+                choices: [...emp, "Cancel"]
+            }
+        ]).then(function (res) {
+            if (res.delete === "Cancel") {
+                start();
+            } else {
+                var temp = res.delete.split(" ")[0];
+                console.log(temp);
+                connection.query(`DELETE FROM employee WHERE first_name = '${temp}'`, function (err, res) {
+                    if(err) throw err;
+                    console.log(temp + " was removed");
+                    start();
+                });
+
+            }
+        });
+    });
+}
 
 start();
