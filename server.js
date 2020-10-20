@@ -157,8 +157,7 @@ function addEmployees() {
                 // console.log(res[0].id);
                 id = parseInt(res[0].id);
                 // console.log(id);
-                connection.query(
-                    "INSERT INTO employee SET ?",
+                connection.query("INSERT INTO employee SET ?",
                     {
                         first_name: test.first,
                         last_name: test.last,
@@ -248,30 +247,51 @@ function managers() {
 }
 
 var emp = [];
+var man = [];
 var update;
 function updateManager() {
     emp.length = 0;
+    man.length = 0;
     connection.query("SELECT first_name FROM employee", function (err, res) {
         if (err) throw err;
         console.table(res);
-        for(let i = 0; i< res.length; i++){
+        for (let i = 0; i < res.length; i++) {
             let x = res[i].first_name;
             emp.push(x);
         }
         connection.query("SELECT first_name FROM employee WHERE manager_id IS NULL", function (err, res) {
             if (err) throw err;
             console.table(res);
-            
-        });
-        inquirer.prompt({
-            name: "empUpdate",
-            type: "list",
-            message: "Select Employee you wish to update :",
-            choices: emp
-        }).then(function(res){
-            update = res.empUpdate;
-            connection.query("")
+            for (let i = 0; i < res.length; i++) {
+                let x = res[i].first_name;
+                man.push(x);
+            }
 
+            inquirer.prompt([{
+                name: "empUpdate",
+                type: "list",
+                message: "Select Employee you wish to update :",
+                choices: emp
+            },
+            {
+                name: "manager",
+                type: "list",
+                message: "Select manager",
+                choices: man
+            }
+            ]).then(function (res) {
+                console.log(res.manager);
+                update = res.empUpdate;
+                connection.query(`SELECT * FROM employee WHERE first_name = "${res.manager}"`, function (err, res) {
+                    if (err) throw err;
+                    var manId = parseInt(res[0].id);
+                    connection.query(`UPDATE employee SET manager_id = ${manId} WHERE first_name = '${update}'`, function (err) {
+                        if (err) throw err;
+                        console.log(update + " manager changed to " + update);
+                        start();
+                    });
+                });
+            });
         });
     });
 }
