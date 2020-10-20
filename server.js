@@ -518,8 +518,10 @@ function budget() {
                         for (let i = 0; i < res.length; i++) {
                             let x = res[i].salary;
                             let y = res[i].id;
+                            let z = res[i].title;
                             holder['sal'].push(x);
                             holder['id'].push(y);
+                            holder['mult'].push(z);
                         }
 
                         for (let i = 0; i < holder['id'].length; i++) {
@@ -534,12 +536,16 @@ function budget() {
                                 // console.log("sal before: ", holder['sal']);
                                 initial += parseInt(holder['sal'][i] * newTest);
                                 //  parseInt(holder['count'][0])));
-                                holder['mult'].push(initial);
+                                // holder['mult'].push(initial);
                                 holder['final'] = initial;
-                                console.log("Final Budget : ", initial);
+                                console.log(`Total Salary for ${holder['mult'][i]}s = ${parseInt(holder['sal'][i]) * newTest}`)
+                                if (i == parseInt(holder['id'].length) - 1) {
+                                    console.log("Final Budget : ", initial);
+                                }
+
                                 // start();
                             });
-                            
+
                             // if (holder['mult'].length > 1) {
                             //     for (let i = 0; i < holder[mult].length; i++) {
                             //         final += parseInt(holder['mult'][i]);
@@ -547,9 +553,9 @@ function budget() {
                             //     console.log("Final Budget: ", final);
                             // }
                         }
-                        console.log("Budget for department: ", initial);
-                        setTimeout(function(){start();}, 3000);
-                        
+                        // console.log("Budget for department: ", holder['final']);
+                        setTimeout(function () { start(); }, 2000);
+
 
                     });
                 });
