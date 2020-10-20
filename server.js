@@ -435,4 +435,35 @@ function delRole() {
     });
 }
 
+function delDept() {
+    var dept = [];
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            var x = res[i].name;
+            dept.push(x);
+        }
+        inquirer.prompt([
+            {
+                name: "delete",
+                type: "list",
+                message: "What department would you like to remove ",
+                choices: [...dept, "Cancel"]
+            }
+        ]).then(function (res) {
+            if (res.delete === "Cancel") {
+                start();
+            } else {
+                connection.query(`DELETE FROM department WHERE name = '${res.delete}'`, function(err){
+                    if(err) throw err;
+                    // console.log(res);
+                    console.log(res.delete + " was removed");
+                    start();
+
+                });
+            }
+        });
+    });
+}
+
 start();
