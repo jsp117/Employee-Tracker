@@ -121,7 +121,7 @@ function addRole() {
 
 var roles = [];
 var test;
-
+var man1;
 function addEmployees() {
     roles.length = 0;
     connection.query("SELECT * FROM role", function (err, res) {
@@ -131,8 +131,12 @@ function addEmployees() {
             var x = res[i].title;
             roles.push(x);
         }
-        connection.query("SELECT * FROM employee WHERE manager_id IS NULL", function(err, res){
-            
+        connection.query("SELECT * FROM employee WHERE manager_id IS NULL", function (err, res) {
+            if (err) throw err;
+            for (let i = 0; i < res.length; i++) {
+                var x = res[i].first_name;
+                man.push(x);
+            }
         });
         inquirer.prompt([
             {
@@ -153,8 +157,9 @@ function addEmployees() {
             },
             {
                 name: "manager",
-                type: "input",
-                message: "Enter manager id: "
+                type: "list",
+                message: "Please Select a manager",
+                choices: man
             }
         ]).then(function (res) {
             var test = res;
@@ -162,20 +167,26 @@ function addEmployees() {
                 if (err) throw err;
                 // console.log(res[0].id);
                 id = parseInt(res[0].id);
-                // console.log(id);
-                connection.query("INSERT INTO employee SET ?",
-                    {
-                        first_name: test.first,
-                        last_name: test.last,
-                        role_id: id,
-                        manager_id: test.manager
-                    },
-                    function (err) {
-                        if (err) throw err;
-                        console.log(test.first, "Added to database");
-                        // start();
-                    }
-                );
+                connection.query(`SELECT * FROM employee WHERE first_name = '${test.manager}'`, function (err, res) {
+                    if(err) throw err;
+                    console.log(res);
+                    man1 = parseInt(res[0].id);
+
+                    // console.log(id);
+                    connection.query("INSERT INTO employee SET ?",
+                        {
+                            first_name: test.first,
+                            last_name: test.last,
+                            role_id: id,
+                            manager_id: man1
+                        },
+                        function (err) {
+                            if (err) throw err;
+                            console.log(test.first, "Added to database");
+                            // start();
+                        }
+                    );
+                });
             });
         });
     });
@@ -383,7 +394,7 @@ function delEmp() {
                 var temp = res.delete.split(" ")[0];
                 console.log(temp);
                 connection.query(`DELETE FROM employee WHERE first_name = '${temp}'`, function (err, res) {
-                    if(err) throw err;
+                    if (err) throw err;
                     console.log(temp + " was removed");
                     start();
                 });
