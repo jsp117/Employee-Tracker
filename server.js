@@ -476,13 +476,18 @@ var idHold = 0;
 let holder = {
     sal: [],
     id: [],
-    count: []
+    count: 0,
+    mult: [],
+    final: []
 };
-
+var initial = 0;
+var final = 0;
 function budget() {
     dept.length = 0;
     holder['sal'].length = 0;
     holder['id'].length = 0;
+    holder['count'].length = 0;
+    holder['mult'].length = 0;
     connection.query("SELECT name FROM department", function (err, res) {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) {
@@ -513,23 +518,31 @@ function budget() {
                             holder['sal'].push(x);
                             holder['id'].push(y);
                         }
-                        // for (let i = 0; i < holder['id'].length; i++) {
 
-
-                        let query = `SELECT * FROM employee WHERE role_id = ${holder['id'][0]}`;
-                        connection.query(query, function (err, res) {
-                            if (err) throw err;
-                            console.log("FINAL RES: ", res);
-                            holder['count'].push(res.length);
-                            console.log("holder before: ", holder['count']);
-                            console.log("sal before: ", holder['sal']);
-                            // for (let i = 0; i < holder['count'][i]; i++) {
-
+                        for (let i = 0; i < holder['id'].length; i++) {
+                            let query = `SELECT * FROM employee WHERE role_id = ${holder['id'][i]}`;
+                            connection.query(query, function (err, res) {
+                                if (err) throw err;
+                                // console.log("FINAL RES: ", res);
+                                var newTest = parseInt(res.length);
+                                holder['count'] += newTest;
+                                // holder['count'].push(res.length);
+                                // console.log("holder before: ", holder['count']);
+                                // console.log("sal before: ", holder['sal']);
+                                var initial = (parseInt(holder['sal'][i] * parseInt(holder['count'][i])));
+                                holder['mult'].push(initial);
+                                console.log("initial budget: ", initial);
+                                // start();
+                            });
+                            
+                            // if (holder['mult'].length > 1) {
+                            //     for (let i = 0; i < holder[mult].length; i++) {
+                            //         final += parseInt(holder['mult'][i]);
+                            //     }
+                            //     console.log("Final Budget: ", final);
                             // }
-                            var final = (parseInt(holder['sal'][0] * parseInt(holder['count'][0])));
-                            console.log("Final budget: ", final);
-                        });
-                        // }
+                        }
+                        calculate();
 
                     });
                 });
@@ -539,5 +552,14 @@ function budget() {
     });
 }
 
+function calculate(){
+    console.log("WORKING");
+    if (holder['mult'].length > 1) {
+        for (let i = 0; i < holder[mult].length; i++) {
+            final += parseInt(holder['mult'][i]);
+        }
+        console.log("Final Budget: ", final);
+    }
+}
 
 start();
