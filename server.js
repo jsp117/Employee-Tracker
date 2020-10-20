@@ -167,7 +167,6 @@ function addEmployees() {
                     function (err) {
                         if (err) throw err;
                         console.log(test.first, "Added to database");
-
                         // start();
                     }
                 );
@@ -238,18 +237,39 @@ function employeeRoles() {
     });
 }
 
+var manView;
+var manId = [];
 function managers() {
-    connection.query("SELECT * FROM employee WHERE manager_id IS NULL", function (err, res) {
+    man.length = 0;
+    connection.query("SELECT first_name, id FROM employee WHERE manager_id IS NULL", function (err, res) {
         if (err) throw err;
+        console.table(res);
+        for (let i = 0; i < res.length; i++) {
+            let x = res[i].first_name;
+            let y = res[i].id;
+            man.push(x);
+            manId.push(y);
+        }
         inquirer.prompt([
             {
-
+                name: "employee",
+                type: "list",
+                message: "Select Manager: ",
+                choices: man
             }
-        ]).then(function(res){
+        ]).then(function (res) {
+            connection.query(`SELECT id FROM employee WHERE first_name = '${res.employee}'`, function (err, res) {
+                if (err) throw err;
+                console.log(res[0].id);
+                connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee x ON employee.manager_id = x.id WHERE employee.manager_id = ${res[0].id} ORDER BY id`, function (err, res) {
+                    if (err) throw err;
+                    console.table(res);
+                    start();
+                });
 
+            });
         });
         // console.table(res);
-
     });
 }
 
@@ -302,5 +322,7 @@ function updateManager() {
         });
     });
 }
+
+
 
 start();
