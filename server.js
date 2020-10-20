@@ -196,7 +196,7 @@ function viewRole() {
 }
 
 function viewEmployees() {
-    connection.query("SELECT * FROM employee", function (err, res) {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee x ON employee.manager_id = x.id ORDER BY id;", function (err, res) {
         if (err) throw err;
         // console.log(res);
         console.table("Employees: ", res);
