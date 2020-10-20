@@ -48,6 +48,7 @@ function start() {
                 break;
             case "View utilized budget":
                 budget();
+                console.log("Budget for dept: ", initial);
                 break;
             case "Update Employee Role":
                 employeeRoles();
@@ -478,15 +479,17 @@ let holder = {
     id: [],
     count: 0,
     mult: [],
-    final: []
+    final: 0
 };
 var initial = 0;
 var final = 0;
 function budget() {
+    initial = 0;
     dept.length = 0;
     holder['sal'].length = 0;
     holder['id'].length = 0;
-    holder['count'].length = 0;
+    holder['count'] = 0;
+    // holder['count'].length = 0;
     holder['mult'].length = 0;
     connection.query("SELECT name FROM department", function (err, res) {
         if (err) throw err;
@@ -525,13 +528,15 @@ function budget() {
                                 if (err) throw err;
                                 // console.log("FINAL RES: ", res);
                                 var newTest = parseInt(res.length);
-                                holder['count'] += newTest;
+                                holder['count'] = newTest;
                                 // holder['count'].push(res.length);
                                 // console.log("holder before: ", holder['count']);
                                 // console.log("sal before: ", holder['sal']);
-                                var initial = (parseInt(holder['sal'][i] * parseInt(holder['count'][i])));
+                                initial += parseInt(holder['sal'][i] * newTest);
+                                //  parseInt(holder['count'][0])));
                                 holder['mult'].push(initial);
-                                console.log("initial budget: ", initial);
+                                holder['final'] = initial;
+                                console.log("Final Budget : ", initial);
                                 // start();
                             });
                             
@@ -542,7 +547,9 @@ function budget() {
                             //     console.log("Final Budget: ", final);
                             // }
                         }
-                        calculate();
+                        console.log("Budget for department: ", initial);
+                        setTimeout(function(){start();}, 3000);
+                        
 
                     });
                 });
@@ -552,14 +559,14 @@ function budget() {
     });
 }
 
-function calculate(){
-    console.log("WORKING");
-    if (holder['mult'].length > 1) {
-        for (let i = 0; i < holder[mult].length; i++) {
-            final += parseInt(holder['mult'][i]);
-        }
-        console.log("Final Budget: ", final);
-    }
-}
+// function calculate(){
+//     console.log("WORKING");
+//     if (holder['mult'].length > 1) {
+//         for (let i = 0; i < holder[mult].length; i++) {
+//             final += parseInt(holder['mult'][i]);
+//         }
+//         console.log("Final Budget: ", final);
+//     }
+// }
 
 start();
