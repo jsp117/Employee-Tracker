@@ -21,7 +21,7 @@ function start() {
             name: "do",
             type: "list",
             message: "What would you like to do?",
-            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Managers", "Update Employee Role", "Update Employee Manager", "View Employees by Manager", "Delete", "Quit"]
+            choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "Update Employee Role", "Update Employee Manager", "View Employees by Manager", "Delete", "Quit"]
         }
     ]).then(function (res) {
         switch (res.do) {
@@ -168,7 +168,7 @@ function addEmployees() {
                 // console.log(res[0].id);
                 id = parseInt(res[0].id);
                 connection.query(`SELECT * FROM employee WHERE first_name = '${test.manager}'`, function (err, res) {
-                    if(err) throw err;
+                    if (err) throw err;
                     console.log(res);
                     man1 = parseInt(res[0].id);
 
@@ -183,7 +183,7 @@ function addEmployees() {
                         function (err) {
                             if (err) throw err;
                             console.log(test.first, "Added to database");
-                            // start();
+                            start();
                         }
                     );
                 });
@@ -399,6 +399,37 @@ function delEmp() {
                     start();
                 });
 
+            }
+        });
+    });
+}
+
+function delRole() {
+    var roleArr = [];
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            var x = res[i].title;
+            roleArr.push(x);
+        }
+        inquirer.prompt([
+            {
+                name: "delete",
+                type: "list",
+                message: "What role would you like to remove ",
+                choices: [...roleArr, "Cancel"]
+            }
+        ]).then(function (res) {
+            if (res.delete === "Cancel") {
+                start();
+            } else {
+                connection.query(`DELETE FROM role WHERE title = '${res.delete}'`, function(err){
+                    if(err) throw err;
+                    // console.log(res);
+                    console.log(res.delete + " was removed");
+                    start();
+
+                });
             }
         });
     });
