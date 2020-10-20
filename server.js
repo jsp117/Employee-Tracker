@@ -247,4 +247,33 @@ function managers() {
     });
 }
 
+var emp = [];
+var update;
+function updateManager() {
+    emp.length = 0;
+    connection.query("SELECT first_name FROM employee", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        for(let i = 0; i< res.length; i++){
+            let x = res[i].first_name;
+            emp.push(x);
+        }
+        connection.query("SELECT first_name FROM employee WHERE manager_id IS NULL", function (err, res) {
+            if (err) throw err;
+            console.table(res);
+            
+        });
+        inquirer.prompt({
+            name: "empUpdate",
+            type: "list",
+            message: "Select Employee you wish to update :",
+            choices: emp
+        }).then(function(res){
+            update = res.empUpdate;
+            connection.query("")
+
+        });
+    });
+}
+
 start();
