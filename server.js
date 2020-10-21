@@ -177,7 +177,7 @@ function addEmployees() {
 
                     connection.query(`SELECT * FROM employee WHERE first_name = '${test.manager}'`, function (err, res) {
                         if (err) throw err;
-                        console.log(res);
+                        // console.log(res);
                         if (test.manager === "This employee is a manager") {
                             man1 = null;
                         } else {
@@ -271,7 +271,7 @@ function employeeRoles() {
     });
 }
 
-var manView;
+// var manView;
 var manId = [];
 function managers() {
     man.length = 0;
@@ -294,7 +294,7 @@ function managers() {
         ]).then(function (res) {
             connection.query(`SELECT id FROM employee WHERE first_name = '${res.employee}'`, function (err, res) {
                 if (err) throw err;
-                console.log(res[0].id);
+                // console.log(res[0].id);
                 connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee x ON employee.manager_id = x.id WHERE employee.manager_id = ${res[0].id} ORDER BY id`, function (err, res) {
                     if (err) throw err;
                     console.table(res);
@@ -315,14 +315,14 @@ function updateManager() {
     man.length = 0;
     connection.query("SELECT first_name FROM employee WHERE manager_id IS NOT NULL", function (err, res) {
         if (err) throw err;
-        console.table(res);
+        // console.table(res);
         for (let i = 0; i < res.length; i++) {
             let x = res[i].first_name;
             emp.push(x);
         }
         connection.query("SELECT first_name FROM employee WHERE manager_id IS NULL", function (err, res) {
             if (err) throw err;
-            console.table(res);
+            // console.table(res);
             for (let i = 0; i < res.length; i++) {
                 let x = res[i].first_name;
                 man.push(x);
@@ -341,7 +341,7 @@ function updateManager() {
                 choices: man
             }
             ]).then(function (res) {
-                console.log(res.manager);
+                // console.log(res.manager);
                 update = res.empUpdate;
                 var newMan = res.manager;
                 connection.query(`SELECT * FROM employee WHERE first_name = "${res.manager}"`, function (err, res) {
@@ -387,7 +387,7 @@ function delEmp() {
     emp.length = 0;
     connection.query("SELECT first_name, last_name FROM employee", function (err, res) {
         if (err) throw err;
-        console.log(res);
+        // console.log(res);
         for (let i = 0; i < res.length; i++) {
             var x = res[i].first_name;
             var y = res[i].last_name;
@@ -405,7 +405,7 @@ function delEmp() {
                 start();
             } else {
                 var temp = res.delete.split(" ")[0];
-                console.log(temp);
+                // console.log(temp);
                 connection.query(`DELETE FROM employee WHERE first_name = '${temp}'`, function (err, res) {
                     if (err) throw err;
                     console.log(temp + " was removed");
@@ -491,7 +491,7 @@ let holder = {
     final: 0
 };
 var initial = 0;
-var final = 0;
+// var final = 0;
 function budget() {
     initial = 0;
     dept.length = 0;
@@ -521,7 +521,7 @@ function budget() {
                 connection.query(`SELECT id FROM department WHERE name = '${hold}'`, function (err, res) {
                     if (err) throw err;
                     idHold = res[0].id;
-                    console.log(idHold);
+                    // console.log(idHold);
                     connection.query(`SELECT * FROM role WHERE department_id = ${idHold}`, function (err, res) {
                         if (err) throw err;
                         for (let i = 0; i < res.length; i++) {
@@ -537,15 +537,9 @@ function budget() {
                             let query = `SELECT * FROM employee WHERE role_id = ${holder['id'][i]}`;
                             connection.query(query, function (err, res) {
                                 if (err) throw err;
-                                // console.log("FINAL RES: ", res);
                                 var newTest = parseInt(res.length);
                                 holder['count'] = newTest;
-                                // holder['count'].push(res.length);
-                                // console.log("holder before: ", holder['count']);
-                                // console.log("sal before: ", holder['sal']);
                                 initial += parseInt(holder['sal'][i] * newTest);
-                                //  parseInt(holder['count'][0])));
-                                // holder['mult'].push(initial);
                                 holder['final'] = initial;
                                 if (i <= parseInt(holder['id'].length) - 1) {
                                     console.log(`Total Salary for ${holder['mult'][i]}s = ${parseInt(holder['sal'][i]) * newTest}`)
@@ -554,21 +548,9 @@ function budget() {
                                 if (i == parseInt(holder['id'].length) - 1) {
                                     console.log("Final Budget : ", initial);
                                 }
-
-                                // start();
                             });
-
-                            // if (holder['mult'].length > 1) {
-                            //     for (let i = 0; i < holder[mult].length; i++) {
-                            //         final += parseInt(holder['mult'][i]);
-                            //     }
-                            //     console.log("Final Budget: ", final);
-                            // }
                         }
-                        // console.log("Budget for department: ", holder['final']);
                         setTimeout(function () { start(); }, 2000);
-
-
                     });
                 });
             }
@@ -576,15 +558,5 @@ function budget() {
         });
     });
 }
-
-// function calculate(){
-//     console.log("WORKING");
-//     if (holder['mult'].length > 1) {
-//         for (let i = 0; i < holder[mult].length; i++) {
-//             final += parseInt(holder['mult'][i]);
-//         }
-//         console.log("Final Budget: ", final);
-//     }
-// }
 
 start();
