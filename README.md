@@ -19,6 +19,8 @@ To install all dependencies, run Npm install in your terminal while opened to th
 ## Usage
 To run this application, open your terminal to the folder it is located in and type "npm install". You must also create a database utilizing the schema and seed files provided with this application. After the tables are created and populated, type "node index.js" to run the application in your terminal. Follow prompts to view, add, update, and delete information from the database. Select done when you would like to exit.
 
+[Usage Video](https://drive.google.com/file/d/17EVMCw2fLB4gZcIQuE8T4tR8Bqota-SS/view)
+
 ## Code_Snippets
 
 This code snippet displays the function to delete employees. First, first and last names are pulled from the employee table and pushed to the array "emp". That array is then displayed in an inquirer prompt as a list. The user's selection is then used in a MySQL delete statement to remove that employee from the database.
