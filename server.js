@@ -119,7 +119,7 @@ function addRole() {
         ]).then(function (res) {
             var resHold = res;
             connection.query(`SELECT id FROM department where name = '${res.dept}'`, function (err, res) {
-                if(err) throw err;
+                if (err) throw err;
                 var newId = parseInt(res[0].id);
                 connection.query(
                     "INSERT INTO role SET ?",
@@ -249,40 +249,57 @@ function viewEmployees() {
 }
 
 var test = [];
+var roleHold = [];
+var tempHold = [];
 function employeeRoles() {
     test.length = 0;
+    roleHold.length = 0;
     connection.query("SELECT * FROM employee", function (err, res) {
         if (err) throw err;
         for (let i = 0; i < res.length; i++) {
             var choice = res[i].first_name;
             test.push(choice);
         }
-        inquirer.prompt(
-            [
-                {
-                    name: "employee",
-                    type: "list",
-                    message: "Select Employee you wish to update :",
-                    choices: [...test, "Cancel"]
-                },
-                {
-                    name: "role",
-                    type: "number",
-                    message: "Enter the role you wish to assign to this employee:  "
-                },
-            ]
-        ).then(function (res) {
-            if (res.employee === "Cancel") {
-                start();
-            } else {
-                connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?",
-                    [res.role, res.employee],
-                    function (err) {
-                        if (err) throw err;
-                        console.log(res.employee + "'s role was changed to " + res.role);
-                        start();
-                    });
+        connection.query("SELECT * FROM role", function (err, res) {
+            if (err) throw err;
+            for (let i = 0; i < res.length; i++) {
+                var x = res[i].title;
+                roleHold.push(x);
             }
+
+            inquirer.prompt(
+                [
+                    {
+                        name: "employee",
+                        type: "list",
+                        message: "Select Employee you wish to update :",
+                        choices: [...test, "Cancel"]
+                    },
+                    {
+                        name: "role",
+                        type: "list",
+                        message: "Select Employee's new role: ",
+                        choices: roleHold
+                    },
+                ]
+            ).then(function (res) {
+                if (res.employee === "Cancel") {
+                    start();
+                } else {
+                    tempHold = res;
+                    connection.query(`SELECT * FROM role WHERE title = '${res.role}'`, function (err, res) {
+                        if (err) throw err;
+                        var id = parseInt(res[0].id);
+                        connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?",
+                            [id, tempHold.employee],
+                            function (err) {
+                                if (err) throw err;
+                                console.log(tempHold.employee + "'s role was changed to " + res[0].title);
+                                start();
+                            });
+                    });
+                }
+            });
         });
     });
 }
@@ -494,6 +511,7 @@ function delDept() {
         });
     });
 }
+
 var dept = [];
 var hold;
 var idHold = 0;
