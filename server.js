@@ -90,36 +90,52 @@ function addDept() {
 }
 
 function addRole() {
-    inquirer.prompt([
-        {
-            name: "role",
-            type: "input",
-            message: "Enter Role name you would like to add: "
-        },
-        {
-            name: "salary",
-            type: "input",
-            message: "Enter the salary for this role: "
-        },
-        {
-            name: "deptId",
-            type: "input",
-            message: "Enter the department id for this role: "
+    var depts = [];
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        for (let i = 0; i < res.length; i++) {
+            var x = res[i].name;
+            // var y = res.id;
+            depts.push(x);
         }
-    ]).then(function (res) {
-        connection.query(
-            "INSERT INTO role SET ?",
+
+        inquirer.prompt([
             {
-                title: res.role,
-                salary: res.salary,
-                department_id: res.deptId
+                name: "role",
+                type: "input",
+                message: "Enter Role name you would like to add: "
             },
-            function (err) {
-                if (err) throw err;
-                console.log(res.role, "Added to database");
-                start();
+            {
+                name: "salary",
+                type: "input",
+                message: "Enter the salary for this role: "
+            },
+            {
+                name: "dept",
+                type: "list",
+                message: "Select department for this role: ",
+                choices: depts
             }
-        );
+        ]).then(function (res) {
+            var resHold = res;
+            connection.query(`SELECT id FROM department where name = '${res.dept}'`, function (err, res) {
+                if(err) throw err;
+                var newId = parseInt(res[0].id);
+                connection.query(
+                    "INSERT INTO role SET ?",
+                    {
+                        title: resHold.role,
+                        salary: resHold.salary,
+                        department_id: newId
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log(resHold.role, " Added to database");
+                        start();
+                    }
+                );
+            });
+        });
     });
 }
 
