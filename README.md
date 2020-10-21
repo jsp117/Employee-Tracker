@@ -1,7 +1,7 @@
 # Employee Tracker
 
 ## Description
-This is a console application that allows you to view and organize an employee database using MySQL. To begin this project, I created a MySQL schema for a database called "team_db". The schema was used to build three tables: department, role, and employee. After setting these tables up to work with foreign keys, the tables were filled with data using a seed sql file. After creating the table, I set up inquirer in server.js to prompt the user, using a switch statement to call functions based on their response. The add functions all utilize inquirer to prompt the user, then use MySQL statements to update the database accordingly. The view functions simply pull all data related to a given table. After completing these functions, I added delete functions to remove data from the selected tables, as well as the ability to view employees by manager and update employee managers. These statements utilize multiple queries to pull the necessary data from multiple tables. The last function added was budget, which also required gathering data from multiple tables, and using the data to calculate the budget. In order to calculate the correct budget, it required gathering the number of employees in a given role, multiplied by the salary for that role, and added to any other roles in the same department.
+This is a console application that allows you to view and organize an employee database using MySQL. To begin this project, I created a MySQL schema for a database called "team_db". The schema was used to build three tables: department, role, and employee. After setting these tables up to work with foreign keys, the tables were filled with data using a seed sql file. After creating the table, I set up inquirer in server.js to prompt the user, using a switch statement to call functions based on their response. The add functions all utilize inquirer to prompt the user, then use MySQL statements to update the database accordingly. The view functions simply pull all data related to a given table. In the view employees function, I added a join statement to pull all relevant information about all employees. After completing these functions, I added delete functions to remove data from the selected tables, as well as the ability to view employees by manager and update employee managers. These statements utilize multiple queries to pull the necessary data from multiple tables. The last function added was budget, which also required gathering data from multiple tables, and using the data to calculate the budget. In order to calculate the correct budget, it required gathering the number of employees in a given role, multiplied by the salary for that role, and added to any other roles in the same department.
   
 ## Table of Contents
 * [Description](#description)
@@ -19,17 +19,15 @@ To install all dependencies, run Npm install in your terminal while opened to th
 ## Usage
 To run this application, open your terminal to the folder it is located in and type "npm install". You must also create a database utilizing the schema and seed files provided with this application. After the tables are created and populated, type "node index.js" to run the application in your terminal. Follow prompts to view, add, update, and delete information from the database. Select done when you would like to exit.
 
+## Code_Snippets
 
+This code snippet displays the function to delete employees. First, first and last names are pulled from the employee table and pushed to the array "emp". That array is then displayed in an inquirer prompt as a list. The user's selection is then used in a MySQL delete statement to remove that employee from the database.
 
-## Code Snippets
+![Delete function](./assets/delete.png)
 
-Code snippet text
+This code snippet displays the final part of the budget function. In order to add the budget multiple roles within the same department together, I utilized a for loop around a query SQL statement. It repeats the SQL statement for as many different roles there are in each department, and multiplies the salary of that role by the number of people that have that role id, adding to the variable initial each time. 
 
-![Validate characters](./assets/validator.png)
-
-Code snippet text
-
-![Employee Constructor](./assets/employee.png)
+![Budget function](./assets/budget.png)
 
 
 ## Built_with
