@@ -15,6 +15,24 @@ connection.connect(function (err) {
     console.log("connected as id " + connection.threadId + "\n");
 });
 
+var dept = [];
+var hold;
+var idHold = 0;
+let holder = {
+    sal: [],
+    id: [],
+    count: 0,
+    mult: [],
+    final: 0
+};
+var initial = 0;
+var roles = [];
+var man1;
+var test = [];
+var roleHold = [];
+var tempHold = [];
+var manId = [];
+
 function start() {
     inquirer.prompt([
         {
@@ -139,9 +157,6 @@ function addRole() {
     });
 }
 
-var roles = [];
-var test;
-var man1;
 function addEmployees() {
     man.length = 0;
     roles.length = 0;
@@ -248,9 +263,7 @@ function viewEmployees() {
     });
 }
 
-var test = [];
-var roleHold = [];
-var tempHold = [];
+
 function employeeRoles() {
     test.length = 0;
     roleHold.length = 0;
@@ -304,8 +317,8 @@ function employeeRoles() {
     });
 }
 
-// var manView;
-var manId = [];
+
+
 function managers() {
     man.length = 0;
     connection.query("SELECT first_name, id FROM employee WHERE manager_id IS NULL", function (err, res) {
@@ -512,20 +525,6 @@ function delDept() {
     });
 }
 
-var dept = [];
-var hold;
-var idHold = 0;
-// var sal = [];
-// var roleId = [];
-let holder = {
-    sal: [],
-    id: [],
-    count: 0,
-    mult: [],
-    final: 0
-};
-var initial = 0;
-// var final = 0;
 function budget() {
     initial = 0;
     dept.length = 0;
