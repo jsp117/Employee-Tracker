@@ -2,6 +2,7 @@ const inquirer = require("inquirer");
 const mysql = require("mysql");
 const table = require("console.table");
 
+// create sql connection
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -15,6 +16,7 @@ connection.connect(function (err) {
     console.log("connected as id " + connection.threadId + "\n");
 });
 
+// initialize variables
 var dept = [];
 var hold;
 var idHold = 0;
@@ -33,6 +35,7 @@ var roleHold = [];
 var tempHold = [];
 var manId = [];
 
+// start application - prompt user 
 function start() {
     inquirer.prompt([
         {
@@ -42,6 +45,7 @@ function start() {
             choices: ["Add Department", "Add Role", "Add Employee", "View Departments", "View Roles", "View Employees", "View Employees by Manager", "View utilized budget", "Update Employee Role", "Update Employee Manager", "Delete", "Quit"]
         }
     ]).then(function (res) {
+        // call functions based on user input
         switch (res.do) {
             case "Add Department":
                 addDept();
@@ -85,6 +89,7 @@ function start() {
     });
 }
 
+// add department
 function addDept() {
     inquirer.prompt([
         {
@@ -107,6 +112,7 @@ function addDept() {
     });
 }
 
+// add role
 function addRole() {
     var depts = [];
     connection.query("SELECT * FROM department", function (err, res) {
@@ -157,6 +163,7 @@ function addRole() {
     });
 }
 
+// add employees
 function addEmployees() {
     man.length = 0;
     roles.length = 0;
@@ -236,6 +243,7 @@ function addEmployees() {
     });
 }
 
+// view departments
 function viewDept() {
     connection.query("SELECT * FROM department", function (err, res) {
         if (err) throw err;
@@ -245,6 +253,7 @@ function viewDept() {
     });
 }
 
+// view roles
 function viewRole() {
     connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err;
@@ -254,6 +263,7 @@ function viewRole() {
     });
 }
 
+// view employees - display all info
 function viewEmployees() {
     connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee x ON employee.manager_id = x.id ORDER BY id;", function (err, res) {
         if (err) throw err;
@@ -263,7 +273,7 @@ function viewEmployees() {
     });
 }
 
-
+// update employee roles
 function employeeRoles() {
     test.length = 0;
     roleHold.length = 0;
@@ -317,8 +327,7 @@ function employeeRoles() {
     });
 }
 
-
-
+// view employees by manager
 function managers() {
     man.length = 0;
     connection.query("SELECT first_name, id FROM employee WHERE manager_id IS NULL", function (err, res) {
@@ -356,6 +365,8 @@ function managers() {
 var emp = [];
 var man = [];
 var update;
+
+// update employee manager
 function updateManager() {
     emp.length = 0;
     man.length = 0;
@@ -404,6 +415,7 @@ function updateManager() {
     });
 }
 
+// delete prompt
 function deleteAny() {
     inquirer.prompt([{
         name: "delete",
@@ -429,6 +441,7 @@ function deleteAny() {
     });
 }
 
+// delete employee
 function delEmp() {
     emp.length = 0;
     connection.query("SELECT first_name, last_name FROM employee", function (err, res) {
@@ -463,6 +476,7 @@ function delEmp() {
     });
 }
 
+// delete role
 function delRole() {
     var roleArr = [];
     connection.query("SELECT * FROM role", function (err, res) {
@@ -494,6 +508,7 @@ function delRole() {
     });
 }
 
+// delete department
 function delDept() {
     dept.length = 0;
     connection.query("SELECT * FROM department", function (err, res) {
@@ -525,6 +540,7 @@ function delDept() {
     });
 }
 
+// display budget by department
 function budget() {
     initial = 0;
     dept.length = 0;
@@ -566,6 +582,7 @@ function budget() {
                             holder['mult'].push(z);
                         }
 
+                        // get and display budget - loops for as many roles are in a department
                         for (let i = 0; i < holder['id'].length; i++) {
                             let query = `SELECT * FROM employee WHERE role_id = ${holder['id'][i]}`;
                             connection.query(query, function (err, res) {
